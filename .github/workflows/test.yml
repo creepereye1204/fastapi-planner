@@ -1,0 +1,29 @@
+name: Test
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "poetry" # Poetry 캐시 사용
+      - name: Install Poetry
+        run: |
+          pip install poetry
+      - name: Configure Poetry
+        run: |
+          poetry config virtualenvs.in-project true
+      - name: Install dependencies
+        run: |
+          poetry install --no-interaction --no-ansi
+      - name: Run tests with pytest
+        run: |
+          poetry run pytest
